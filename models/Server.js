@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const route = require("../routers/user");
+const route = require("../routers/userRouter");
 
 class Server {
   constructor() {
@@ -32,7 +32,7 @@ class Server {
   start() {
     //Levantar el servidor 
     this.app.listen(this.PORT, () => {
-      console.log(`Server running on port ${this.PORT}`);
+      console .log(`Server running on port ${this.PORT}`);
     });
   }
 }
