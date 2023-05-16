@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-
+const User = require("../models/userModel");
 const getUser = (req = request, res = response) => {
   const {
     nombre = "No name",
@@ -17,13 +17,30 @@ const getUser = (req = request, res = response) => {
   });
 };
 
-const postUser = (req = request, res = response) => {
-  const { nombre, edad } = req.body;
-  console.log();
+const postUser = async (req = request, res = response) => {
+  const { nombre, email, password,google,img=""} = req.body;
+
+  const user = new User({
+    nombre,
+    email,
+    password,
+    google,
+    img,
+    rol: "Admin_Rol",
+  });
+
+  try {
+    await user.save(); 
+    console.log('Usuario guardado ');
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error al guardar')
+  }
+
   res.status(201).json({
     msg: "post API -Controller",
-    nombre,
-    edad,
+    user,
+    Error
   });
 };
 

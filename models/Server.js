@@ -13,7 +13,7 @@ class Server {
     
     //middlewares
     this.middlewares();
-    
+     
     //rutas de la app
     this.rutas();
   }

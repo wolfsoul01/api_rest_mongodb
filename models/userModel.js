@@ -22,11 +22,11 @@ const userSchema = Schema({
     required: true,
     enum: ["Admin_Rol", "User_Rol"],
   },
-  img: {
+  activo: { 
     type: Boolean,
     default: true,
   },
-  img: {
+  google: {
     type: Boolean,
     default: false,
   },
