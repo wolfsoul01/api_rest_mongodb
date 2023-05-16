@@ -1,5 +1,9 @@
 const { request, response } = require("express");
 const User = require("../models/userModel");
+const bcryptjs =require('bcryptjs')
+
+
+
 const getUser = (req = request, res = response) => {
   const {
     nombre = "No name",
@@ -29,6 +33,13 @@ const postUser = async (req = request, res = response) => {
     rol: "Admin_Rol",
   });
 
+  // Verificar si el correo existe 
+
+  //Encriptar password
+  const salt= bcryptjs.genSaltSync();
+  user.password = bcryptjs.hashSync(password,salt)
+
+  //Guardar en db 
   try {
     await user.save(); 
     console.log('Usuario guardado ');
