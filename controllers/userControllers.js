@@ -3,7 +3,6 @@ const User = require("../models/userModel");
 const bcryptjs =require('bcryptjs');
 
 
-
 const getUser = (req = request, res = response) => {
   const {
     nombre = "No name",
@@ -36,12 +35,12 @@ const postUser = async (req = request, res = response) => {
 
 
   // Verificar si el correo existe 
-  const emailExist =await User.findOne({email})
+ /*  const emailExist =await User.findOne({email})
   if(emailExist){
     return res.status(400).json({
       msg:'El correo ya exite '
     });
-  }
+  } */
 
 
   //Encriptar password
@@ -57,10 +56,16 @@ const postUser = async (req = request, res = response) => {
     throw new Error('Error al guardar')
   }
 
+  //Limpiando la password de la res
+  const resp = user.toObject();
+  delete resp.password
+
+
+  //respuesta 
   res.status(201).json({
     msg: "post API -Controller",
-    user,
-    Error
+    resp,
+    
   });
 };
 
