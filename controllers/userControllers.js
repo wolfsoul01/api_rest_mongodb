@@ -72,7 +72,7 @@ const postUser = async (req = request, res = response) => {
 
 const putUser = async (req = request, res = response) => {
   const { userID } = req.params;
-  const { nombre, img } = req.body;
+  const { nombre, img ,rol} = req.body;
   let { password } = req.body;
 
   if (password) {
@@ -80,12 +80,11 @@ const putUser = async (req = request, res = response) => {
     password = bcryptjs.hashSync(password, salt);
   }
 
-  await User.findByIdAndUpdate(userID, { nombre, password, img });
+  const user =await User.findByIdAndUpdate(userID, { nombre, password, img ,rol}).select("-password");
 
   res.status(200).json({
     msg: "put API -Controller",
-    userID,
-    password,
+    user
   });
 };
 

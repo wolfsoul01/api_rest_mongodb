@@ -9,8 +9,7 @@ const {
   pathcUser,
 } = require("../controllers/userControllers");
 const { validarCampos } = require("../middleware/validar_camposMiddleware");
-const { rolValidator, emailValidator } = require("../helpers/dbValidaciones");
-
+const { rolValidator, emailValidator, exiteIDValidator } = require("../helpers/dbValidaciones");
 
 //Rutas
 const router = Router();
@@ -27,25 +26,40 @@ router.post(
       "La contraseña debe tener al menos 6 caracteres"
     ).isLength({ min: 6 }),
     //check("rol", "El rol no es valido").isIn(["Admin_Rol", "User_Rol"]),
-    check('email').custom(emailValidator),
-    check('rol').notEmpty(),
-    check('rol').custom(rolValidator),
+    check("email").custom(emailValidator),
+    check("rol").notEmpty(),
+    check("rol").custom(rolValidator),
     validarCampos,
   ],
   postUser
 );
 
-router.put("/:userID",[
-  
-], putUser);
+router.put(
+  "/:userID",
+  [
+    check("userID", "No es un id valido de mongo ").isMongoId(),
+    check("rol").custom(rolValidator),
+    check(
+      "password",
+      "La contraseña debe tener al menos 6 caracteres"
+    ).isLength({ min: 6 }),
+    check('userID').custom(exiteIDValidator),
+    validarCampos,
+  ],
+  putUser
+);
 
-router.delete("/:userID",[
-  check('userID','Debes proporcionar el ID').not().isEmpty(),
-  check('userID','No es un id valido de mongo ').isMongoId(),
+router.delete(
+  "/:userID",
+  [
+    check("userID", "Debes proporcionar el ID").not().isEmpty(),
+    check("userID", "No es un id valido de mongo ").isMongoId(),
 
-  validarCampos
-], deletUser);
+    validarCampos,
+  ],
+  deletUser
+);
 
-router.patch("/" ,pathcUser);
+router.patch("/", pathcUser);
 
 module.exports = router;

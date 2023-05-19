@@ -17,7 +17,16 @@ const emailValidator = async (email="") => {
   }
 };
 
+const exiteIDValidator = async (id="") => {
+  const existeId = await User.findById(id);
+
+  if (!existeId) {
+    throw new Error(`El id:${id} no existe `);
+  }
+};
+
 module.exports = {
   rolValidator,
   emailValidator,
+  exiteIDValidator
 };
