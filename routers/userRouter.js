@@ -35,7 +35,9 @@ router.post(
   postUser
 );
 
-router.put("/:userID", putUser);
+router.put("/:userID",[
+  
+], putUser);
 
 router.delete("/:userID",[
   check('userID','Debes proporcionar el ID').not().isEmpty(),

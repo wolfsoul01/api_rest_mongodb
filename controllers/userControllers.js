@@ -3,10 +3,20 @@ const User = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
 
 const getUser = async (req = request, res = response) => {
-  const { limit = 10, skip = 0 } = req.query;
+  const { limit = 10, skip = 0 ,userID} = req.query;
+
+
+  if(userID){
+
+     const {nombre,rol,_id,email,} = await User.findOne({_id:userID})
+
+     
+    return res.json({
+      nombre,rol,_id,email,
+    })
+  }
 
   const users = await User.find({ activo: true }).limit(limit).skip(skip);
-
   const total = users.length;
 
   res.json({
@@ -60,21 +70,30 @@ const postUser = async (req = request, res = response) => {
   });
 };
 
-const putUser = (req = request, res = response) => {
+const putUser = async (req = request, res = response) => {
   const { userID } = req.params;
+  const { nombre, img } = req.body;
+  let { password } = req.body;
+
+  if (password) {
+    const salt = bcryptjs.genSaltSync();
+    password = bcryptjs.hashSync(password, salt);
+  }
+
+  await User.findByIdAndUpdate(userID, { nombre, password, img });
+
   res.status(200).json({
     msg: "put API -Controller",
     userID,
+    password,
   });
 };
 
-const deletUser = async(req = request, res = response) => {
- 
-  const {userID}= req.params;
+const deletUser = async (req = request, res = response) => {
+  const { userID } = req.params;
 
+  await User.findByIdAndUpdate(userID, { activo: false });
 
-  await User.findByIdAndUpdate(userID,{activo:false});
- 
   res.json({
     msg: "delete API -Controller",
   });
