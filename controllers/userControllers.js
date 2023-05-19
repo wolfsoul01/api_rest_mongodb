@@ -68,7 +68,13 @@ const putUser = (req = request, res = response) => {
   });
 };
 
-const deletUser = (req = request, res = response) => {
+const deletUser = async(req = request, res = response) => {
+ 
+  const {userID}= req.params;
+
+
+  await User.findByIdAndUpdate(userID,{activo:false});
+ 
   res.json({
     msg: "delete API -Controller",
   });

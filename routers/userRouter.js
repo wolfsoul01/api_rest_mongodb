@@ -37,8 +37,13 @@ router.post(
 
 router.put("/:userID", putUser);
 
-router.delete("/", deletUser);
+router.delete("/:userID",[
+  check('userID','Debes proporcionar el ID').not().isEmpty(),
+  check('userID','No es un id valido de mongo ').isMongoId(),
 
-router.patch("/", pathcUser);
+  validarCampos
+], deletUser);
+
+router.patch("/" ,pathcUser);
 
 module.exports = router;
