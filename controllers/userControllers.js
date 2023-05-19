@@ -1,71 +1,62 @@
 const { request, response } = require("express");
 const User = require("../models/userModel");
-const bcryptjs =require('bcryptjs');
+const bcryptjs = require("bcryptjs");
 
+const getUser = async (req = request, res = response) => {
+  const { limit = 10, skip = 0 } = req.query;
 
-const getUser = (req = request, res = response) => {
-  const {
-    nombre = "No name",
-    apiKey = "null",
-    page = 1,
-    limit = 5,
-  } = req.query;
+  const users = await User.find({ activo: true }).limit(limit).skip(skip);
+
+  const total = users.length;
 
   res.json({
     msg: "get API -Controller",
-    nombre,
-    apiKey,
-    page,
-    limit,
+    total,
+    users,
   });
 };
 
 const postUser = async (req = request, res = response) => {
-  const { nombre, email, password,google,img="",rol} = req.body;
+  const { nombre, email, password, google, img = "", rol } = req.body;
 
-  
   const user = new User({
     nombre,
     email,
     password,
     google,
     img,
-    rol
+    rol,
   });
 
-
-  // Verificar si el correo existe 
- /*  const emailExist =await User.findOne({email})
+  // Verificar si el correo existe
+  /*  const emailExist =await User.findOne({email})
   if(emailExist){
     return res.status(400).json({
       msg:'El correo ya exite '
     });
   } */
 
-
   //Encriptar password
-  const salt= bcryptjs.genSaltSync();
-  user.password = bcryptjs.hashSync(password,salt)
+  const salt = bcryptjs.genSaltSync();
+  user.password = bcryptjs.hashSync(password, salt);
 
-  //Guardar en db 
+  //Guardar en db
   try {
-    await user.save(); 
-    console.log('Usuario guardado ');
+    await user.save();
+    console.log("Usuario guardado ");
   } catch (error) {
     console.log(error);
-    throw new Error('Error al guardar')
+    throw new Error("Error al guardar");
   }
 
   //Limpiando la password de la res
   const resp = user.toObject();
-  delete resp.password
+  delete resp.password;
 
-
-  //respuesta 
+  //respuesta
   res.status(201).json({
     msg: "post API -Controller",
     resp,
-    
   });
 };
 
