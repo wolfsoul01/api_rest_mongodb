@@ -11,7 +11,6 @@ const getUser = async (req = request, res = response) => {
     });
   }
 
-  console.log(Number(limit));
   if (userID) {
     const user = await User.findOne({ _id: userID }).select("-password");
     return res.json({

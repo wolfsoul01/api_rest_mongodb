@@ -1,4 +1,4 @@
-const { Router } = require("express");
+const { Router, request } = require("express");
 const { check } = require("express-validator");
 
 const {
@@ -14,7 +14,11 @@ const { rolValidator, emailValidator, exiteIDValidator } = require("../helpers/d
 //Rutas
 const router = Router();
 
-router.get("/", getUser);
+router.get("/",[
+  check("req").custom((req)=>{
+    const {skip,limit}= req.query 
+  })
+], getUser);
 
 router.post(
   "/",
