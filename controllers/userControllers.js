@@ -3,20 +3,25 @@ const User = require("../models/userModel");
 const bcryptjs = require("bcryptjs");
 
 const getUser = async (req = request, res = response) => {
-  const { limit = 10, skip = 0 ,userID} = req.query;
+  const { limit = 10, skip = 0, userID } = req.query;
 
-
-  if(userID){
-
-     const {nombre,rol,_id,email,} = await User.findOne({_id:userID})
-
-     
-    return res.json({
-      nombre,rol,_id,email,
-    })
+  if (isNaN(Number(limit))  ||isNaN( Number(skip)) ) {
+    return res.status(404).json({
+      msg: `Los valores de limit y skip deben ser number `,
+    });
   }
 
-  const users = await User.find({ activo: true }).limit(limit).skip(skip);
+  console.log(Number(limit));
+  if (userID) {
+    const user = await User.findOne({ _id: userID }).select("-password");
+    return res.json({
+      user,
+    });
+  }
+
+  const users = await User.find({ activo: true })
+    .limit(Number(limit))
+    .skip(Number(skip));
   const total = users.length;
 
   res.json({
@@ -72,7 +77,7 @@ const postUser = async (req = request, res = response) => {
 
 const putUser = async (req = request, res = response) => {
   const { userID } = req.params;
-  const { nombre, img ,rol} = req.body;
+  const { nombre, img, rol } = req.body;
   let { password } = req.body;
 
   if (password) {
@@ -80,11 +85,16 @@ const putUser = async (req = request, res = response) => {
     password = bcryptjs.hashSync(password, salt);
   }
 
-  const user =await User.findByIdAndUpdate(userID, { nombre, password, img ,rol}).select("-password");
+  const user = await User.findByIdAndUpdate(userID, {
+    nombre,
+    password,
+    img,
+    rol,
+  }).select("-password");
 
   res.status(200).json({
     msg: "put API -Controller",
-    user
+    user,
   });
 };
 
