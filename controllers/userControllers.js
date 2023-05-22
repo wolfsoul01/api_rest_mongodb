@@ -5,23 +5,24 @@ const bcryptjs = require("bcryptjs");
 const getUser = async (req = request, res = response) => {
   const { limit = 10, skip = 0, userID } = req.query;
 
-  if (isNaN(Number(limit))  ||isNaN( Number(skip)) ) {
+  if (isNaN(Number(limit)) || isNaN(Number(skip))) {
     return res.status(404).json({
       msg: `Los valores de limit y skip deben ser number `,
     });
   }
 
-  if (userID) {
+  // buscar por id
+  /* if (userID) {
     const user = await User.findOne({ _id: userID }).select("-password");
     return res.json({
       user,
     });
-  }
+  } */
 
-  const users = await User.find({ activo: true })
-    .limit(Number(limit))
-    .skip(Number(skip));
-  const total = users.length;
+  const [total,users]= await Promise.all([
+    await User.countDocuments(),
+    await User.find({ activo: true }).limit(Number(limit)).skip(Number(skip)),
+  ]);
 
   res.json({
     msg: "get API -Controller",
